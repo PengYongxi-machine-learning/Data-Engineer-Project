@@ -1,0 +1,57 @@
+---
+title: "Untitled"
+format:
+  pdf:
+    include-in-header:
+      text: |
+        \usepackage{tikz}
+        \usetikzlibrary{positioning, arrows, shapes.geometric}
+---
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.7cm and 0cm,
+        % Define styles for the shapes
+        box/.style={draw, thick, rounded corners, align=center, minimum width=6cm, minimum height=1cm, font=\sffamily},
+        bronze/.style={box, fill=orange!20, draw=orange!80!black},
+        silver/.style={box, fill=gray!20, draw=gray!80!black},
+        gold/.style={box, fill=yellow!30, draw=yellow!80!black},
+        process/.style={box, fill=blue!10, draw=blue!80!black, minimum width=4cm},
+        model/.style={box, fill=green!20, draw=green!80!black},
+        source/.style={box, fill=gray!10, draw=black, rounded corners=0},
+        endpoint/.style={draw, thick, rounded corners=0.4cm, align=center, fill=white, minimum width=3cm, minimum height=1cm, font=\sffamily},
+        arrow/.style={->, >=stealth, thick, draw=black!70}
+    ]
+
+    % Define Nodes
+    \node[source] (src) {\textbf{External Data} \\ Raw CSV};
+    
+    \node[bronze, below=1cm of src] (bronze) {\textbf{Bronze Tier (Raw)} \\ \textit{Raw dataset.csv}};
+    \node[process, below=of bronze] (dq) {Data Quality Check \\ (Pandas)};
+    \node[silver, below=of dq] (silver) {\textbf{Silver Tier (Processed)} \\ \textit{Clean dataset.csv}};
+    \node[process, below=of silver] (fe) {Feature Engineering \\ (Regex, Scaling)};
+    \node[gold, below=of fe] (gold) {\textbf{Gold Tier (Curated)} \\ \textit{Use dataset.csv}};
+    
+    \node[model, below=1cm of gold] (ml) {\textbf{Machine Learning Layer} \\ (Scikit-Learn LR)};
+    
+    \node[endpoint, below left=0.8cm and -1.5cm of ml] (out1) {City Fuel \\ Consumption};
+    \node[endpoint, below right=0.8cm and -1.5cm of ml] (out2) {Hwy Fuel \\ Consumption};
+
+    % Draw Arrows
+    \draw[arrow] (src) -- node[right, font=\sffamily\small] {Batch Ingestion} (bronze);
+    
+    \draw[arrow, dashed] (bronze) -- (dq);
+    \draw[arrow, dashed] (dq) -- (silver);
+    \draw[arrow, dashed] (silver) -- (fe);
+    \draw[arrow, dashed] (fe) -- (gold);
+    
+    \draw[arrow] (gold) -- node[right, font=\sffamily\small] {Train/Test Split} (ml);
+    
+    \draw[arrow] (ml) -- (out1);
+    \draw[arrow] (ml) -- (out2);
+
+    \end{tikzpicture}
+    \caption{Data Engineering \& MLOps Architecture Flow}
+    \label{fig:architecture}
+\end{figure}
